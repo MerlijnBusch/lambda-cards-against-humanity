@@ -1,0 +1,38 @@
+# === AWS SAM build artifacts ===
+.aws-sam/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.env.*
+.DS_Store
+
+# SAM deployment artifacts (optional)
+samconfig.toml
+*.zip
+
+# === Fleet IDE (JetBrains Fleet) ===
+.idea/
+.fleet/
+*.fleetsettings.json
+
+# === Node.js (if using Lambda with Node) ===
+node_modules/
+npm-debug.log
+package-lock.json
+yarn.lock
+
+# === Python virtualenv (if applicable) ===
+.venv/
+venv/
+ENV/
+
+# === VS Code (in case you're using both) ===
+.vscode/
+
+# === Logs ===
+*.log
+
+# === OS files ===
+Thumbs.db
+.DS_Store
