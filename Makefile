@@ -88,17 +88,21 @@ sam-api:
 		--docker-network $(DOCKER_NETWORK) \
 		--region $(AWS_REGION)
 
-test-api:
-	@echo "1. Creating game session..."
-	@SESSION_ID=$$(curl -s -X POST http://localhost:3000/create | jq -r '.sessionId'); \
-	echo "→ Created session: $$SESSION_ID"; \
-	\
-	echo "2. Joining session as user-456 (Bob)..."; \
-	curl -s -X POST http://localhost:3000/join \
-		-H "Content-Type: application/json" \
-		-d '{"sessionId":"'"$$SESSION_ID"'","playerId":"user-456","playerName":"Bob"}' | jq .
-
 happy-path:
 	./scripts/happy-path.sh
+
+install-lambdas:
+	@echo "→ Installing dependencies in all lambda functions..."
+	@for dir in lambda/*; do \
+	  if [ -f $$dir/package.json ]; then \
+	    echo "📦 Installing in $$dir..."; \
+	    cd $$dir && npm install && cd - > /dev/null; \
+	  else \
+	    echo "⚠️  Skipping $$dir (no package.json)"; \
+	  fi \
+	done
+	@echo "✔ All done."
+
+
 
 
