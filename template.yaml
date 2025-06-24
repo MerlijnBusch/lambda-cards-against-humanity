@@ -3,12 +3,70 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: CreateGameSession
-      CodeUri: lambda/createGameSession/   # <- this folder must contain app.js
-      Handler: app.handler          # <- matches file: "app.js" and function: "handler"
+      CodeUri: lambda/createGameSession/
+      Handler: app.handler
       Runtime: nodejs18.x
       Events:
         CreateGameAPI:
           Type: Api
           Properties:
             Path: /create
-            Method: GET
+            Method: POST
+
+  JoinGameSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: JoinGameSession
+      CodeUri: lambda/joinGameSession/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Events:
+        JoinGameAPI:
+          Type: Api
+          Properties:
+            Path: /join
+            Method: POST
+
+  StartGameSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: StartGameSession
+      CodeUri: lambda/startGameSession/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Events:
+        StartGameAPI:
+          Type: Api
+          Properties:
+            Path: /start
+            Method: POST
+
+  InitJudgeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: InitJudge
+      CodeUri: lambda/initJudge/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Events:
+        InitJudgeAPI:
+          Type: Api
+          Properties:
+            Path: /init-judge
+            Method: POST
+
+  RotateJudgeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: RotateJudge
+      CodeUri: lambda/rotateJudge/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Events:
+        RotateJudgeAPI:
+          Type: Api
+          Properties:
+            Path: /rotate-judge
+            Method: POST
+
+
