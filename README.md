@@ -22,7 +22,7 @@ This MVP supports full round-based play, with rotating judges, hand management, 
 
 ### 🔹 Game Logic & Flow
   * [ ] next-round endpoint (rotate → draw → start)
-  * [ ]  End game after X rounds or score limit
+  * [ ] End game after X rounds or score limit
   * [ ] Timeout auto-pick if judge is inactive
 
 ### 🔹 Gameplay UX

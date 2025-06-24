@@ -17,59 +17,21 @@ stop-dynamodb:
 reset-dynamodb: stop-dynamodb run-dynamodb create-table
 
 create-table:
-	aws dynamodb create-table \
-	  --table-name GameSessions \
-	  --attribute-definitions \
-	    AttributeName=PK,AttributeType=S \
-	    AttributeName=SK,AttributeType=S \
-	  --key-schema \
-	    AttributeName=PK,KeyType=HASH \
-	    AttributeName=SK,KeyType=RANGE \
-	  --billing-mode PAY_PER_REQUEST \
-	  --endpoint-url http://localhost:8000 \
-	  --region eu-central-1
-	\
-	aws dynamodb create-table \
-	  --table-name CardDecks \
-	  --attribute-definitions \
-	    AttributeName=PK,AttributeType=S \
-	    AttributeName=SK,AttributeType=S \
-	  --key-schema \
-	    AttributeName=PK,KeyType=HASH \
-	    AttributeName=SK,KeyType=RANGE \
-	  --billing-mode PAY_PER_REQUEST \
-	  --endpoint-url http://localhost:8000 \
-	  --region eu-central-1
+	./scripts/create-tables.sh
 
 delete-table:
-	aws dynamodb delete-table \
-  		--table-name GameSessions \
-  		--endpoint-url http://localhost:8000 \
-  		--region eu-central-1
-	\
-  	aws dynamodb delete-table \
-  		--table-name CardDecks \
-  		--endpoint-url http://localhost:8000 \
-  		--region eu-central-1
+	./scripts/delete-tables.sh
+
+log-table-sessions:
+	./scripts/log-sessions.sh
+
+log-card-decks:
+	./scripts/log-card-decks.sh
 
 list-tables:
 	aws dynamodb list-tables \
 	  --endpoint-url http://localhost:8000 \
 	  --region eu-central-1
-
-log-table-sessions:
-	aws dynamodb scan \
-	  --table-name GameSessions \
-	  --endpoint-url http://localhost:8000 \
-	  --region eu-central-1 \
-	  --output json | jq .
-
-log-card-decks:
-	aws dynamodb scan \
-	  --table-name CardDecks \
-	  --endpoint-url http://localhost:8000 \
-	  --region eu-central-1 \
-	  --output json | jq .
 
 seed-card-decks:
 	./scripts/seed-card-decks.sh
