@@ -49,3 +49,4 @@ for i in $(seq 1 50); do
 done
 
 echo "✔ CardDecks seeded with 7 black cards and 50 white cards."
+exit 0

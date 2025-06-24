@@ -41,7 +41,6 @@ create-table:
 	  --endpoint-url http://localhost:8000 \
 	  --region eu-central-1
 
-
 delete-table:
 	aws dynamodb delete-table \
   		--table-name GameSessions \
@@ -99,37 +98,7 @@ test-api:
 		-H "Content-Type: application/json" \
 		-d '{"sessionId":"'"$$SESSION_ID"'","playerId":"user-456","playerName":"Bob"}' | jq .
 
-test-start:
-	@SESSION_ID=$$(curl -s -X POST http://localhost:3000/create | jq -r '.sessionId'); \
-	echo "Created session: $$SESSION_ID"; \
-	\
-	for i in 1 2 3 4; do \
-	  PLAYER_ID="user-$$i"; \
-	  PLAYER_NAME="Player$$i"; \
-	  echo "→ Joining $$PLAYER_NAME..."; \
-	  curl -s -X POST http://localhost:3000/join \
-	    -H "Content-Type: application/json" \
-	    -d '{"sessionId":"'"$$SESSION_ID"'","playerId":"'"$$PLAYER_ID"'","playerName":"'"$$PLAYER_NAME"'"}' > /dev/null; \
-	done; \
-	\
-	echo "→ Starting game session..."; \
-	curl -s -X POST http://localhost:3000/start \
-	  -H "Content-Type: application/json" \
-	  -d '{"sessionId":"'"$$SESSION_ID"'"}' | jq .; \
-	\
-	echo "→ Initializing judge rotation..."; \
-	curl -s -X POST http://localhost:3000/init-judge \
-	  -H "Content-Type: application/json" \
-	  -d '{"sessionId":"'"$$SESSION_ID"'"}' | jq .; \
-	\
-	echo "→ Starting round..."; \
-	curl -s -X POST http://localhost:3000/start-round \
-	  -H "Content-Type: application/json" \
-	  -d '{"sessionId":"'"$$SESSION_ID"'"}' | jq .; \
-	\
-	echo "→ Rotating judge for next round..."; \
-	curl -s -X POST http://localhost:3000/rotate-judge \
-	  -H "Content-Type: application/json" \
-	  -d '{"sessionId":"'"$$SESSION_ID"'"}' | jq .
+happy-path:
+	./scripts/happy-path.sh
 
 

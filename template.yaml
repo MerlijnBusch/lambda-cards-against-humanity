@@ -83,5 +83,66 @@ Resources:
             Path: /start-round
             Method: POST
 
+  DrawCardsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: DrawCards
+      CodeUri: lambda/drawCards/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Description: Assigns unique white cards to a player up to a hand of 7
+      MemorySize: 128
+      Timeout: 10
+      Events:
+        DrawCardsAPI:
+          Type: Api
+          Properties:
+            Path: /draw-cards
+            Method: POST
+
+  SubmitCardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SubmitCard
+      CodeUri: lambda/submitCard/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Events:
+        SubmitCardAPI:
+          Type: Api
+          Properties:
+            Path: /submit-card
+            Method: POST
+
+  GetSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetSession
+      CodeUri: lambda/getSession/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Events:
+        GetSessionAPI:
+          Type: Api
+          Properties:
+            Path: /session/{sessionId}
+            Method: GET
+
+  PickWinnerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: PickWinner
+      CodeUri: lambda/pickWinner/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Events:
+        PickWinnerAPI:
+          Type: Api
+          Properties:
+            Path: /pick-winner
+            Method: POST
+
+
+
 
 
