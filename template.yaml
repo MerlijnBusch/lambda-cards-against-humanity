@@ -69,4 +69,19 @@ Resources:
             Path: /rotate-judge
             Method: POST
 
+  StartRoundFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: StartRound
+      CodeUri: lambda/startRound/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Events:
+        StartRoundAPI:
+          Type: Api
+          Properties:
+            Path: /start-round
+            Method: POST
+
+
 

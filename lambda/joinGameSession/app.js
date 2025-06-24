@@ -46,7 +46,6 @@ const {
         playerId: { S: playerId },
         name: { S: playerName },
         score: { N: "0" },
-        isJudge: { BOOL: false }
       };
 
       await dynamo.send(new PutItemCommand({
@@ -67,4 +66,3 @@ const {
       };
     }
   };
-  
