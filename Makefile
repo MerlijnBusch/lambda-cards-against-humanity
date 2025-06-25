@@ -37,7 +37,7 @@ seed-card-decks:
 	./scripts/seed-card-decks.sh
 
 sam-build:
-	sam build --template $(TEMPLATE)
+	sam build --template template.yaml
 
 sam-invoke:
 	sam local invoke \
@@ -64,6 +64,7 @@ install-lambdas:
 	  fi \
 	done
 	@echo "✔ All done."
+
 
 
 

@@ -55,20 +55,6 @@ Resources:
             Path: /init-judge
             Method: POST
 
-  RotateJudgeFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: RotateJudge
-      CodeUri: lambda/rotateJudge/
-      Handler: app.handler
-      Runtime: nodejs18.x
-      Events:
-        RotateJudgeAPI:
-          Type: Api
-          Properties:
-            Path: /rotate-judge
-            Method: POST
-
   StartRoundFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -81,23 +67,6 @@ Resources:
           Type: Api
           Properties:
             Path: /start-round
-            Method: POST
-
-  DrawCardsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: DrawCards
-      CodeUri: lambda/drawCards/
-      Handler: app.handler
-      Runtime: nodejs18.x
-      Description: Assigns unique white cards to a player up to a hand of 7
-      MemorySize: 128
-      Timeout: 10
-      Events:
-        DrawCardsAPI:
-          Type: Api
-          Properties:
-            Path: /draw-cards
             Method: POST
 
   SubmitCardFunction:
@@ -141,8 +110,18 @@ Resources:
           Properties:
             Path: /pick-winner
             Method: POST
-
-
-
-
-
+            
+  NextRoundFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: NextRound
+      CodeUri: lambda/nextRound/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Timeout: 10
+      Events:
+        NextRoundAPI:
+          Type: Api
+          Properties:
+            Path: /next-round
+            Method: POST

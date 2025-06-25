@@ -21,37 +21,19 @@ curl -s -X POST http://localhost:3000/start \
   -H "Content-Type: application/json" \
   -d "{\"sessionId\":\"$SESSION_ID\"}" | jq .
 
-# Draw cards for each player
-echo "→ Drawing cards for each player..."
-for i in 1 2 3 4; do
-  PLAYER_ID="user-$i"
-  echo "  → Drawing for $PLAYER_ID"
-  curl -s -X POST http://localhost:3000/draw-cards \
-    -H "Content-Type: application/json" \
-    -d "{\"sessionId\":\"$SESSION_ID\", \"playerId\":\"$PLAYER_ID\"}" > /dev/null
-done
-
-# Init judge
-echo "→ Initializing judge rotation..."
-curl -s -X POST http://localhost:3000/init-judge \
-  -H "Content-Type: application/json" \
-  -d "{\"sessionId\":\"$SESSION_ID\"}" | jq .
-
-# Start round
-echo "→ Starting round..."
-ROUND_INFO=$(curl -s -X POST http://localhost:3000/start-round \
+# === ROUND 1 via /next-round ===
+echo "→ Starting ROUND 1 via /next-round..."
+ROUND_1_INFO=$(curl -s -X POST http://localhost:3000/next-round \
   -H "Content-Type: application/json" \
   -d "{\"sessionId\":\"$SESSION_ID\"}")
-echo "$ROUND_INFO" | jq .
+echo "$ROUND_1_INFO" | jq .
 
-PICK=$(echo "$ROUND_INFO" | jq -r '.blackCard.pick')
+PICK=$(echo "$ROUND_1_INFO" | jq -r '.blackCard.pick')
 JUDGE=$(curl -s -X GET http://localhost:3000/session/"$SESSION_ID" | jq -r '.currentJudgeId')
 
-# Simulate card submissions
-echo "→ Simulating card submissions..."
+echo "→ Submitting cards for ROUND 1..."
 for i in 1 2 3 4; do
   PLAYER_ID="user-$i"
-
   if [[ "$PLAYER_ID" == "$JUDGE" ]]; then
     echo "  ❌ Skipping judge ($PLAYER_ID)"
     continue
@@ -66,13 +48,11 @@ for i in 1 2 3 4; do
   echo "  → $PLAYER_ID submitting cards: $HAND"
   curl -s -X POST http://localhost:3000/submit-card \
     -H "Content-Type: application/json" \
-    -d "{\"sessionId\":\"$SESSION_ID\", \"playerId\":\"$PLAYER_ID\", \"cardIds\": $HAND}" | jq .
+    -d "{\"sessionId\":\"$SESSION_ID\", \"playerId\":\"$PLAYER_ID\", \"cardIds\": $HAND}" > /dev/null
 done
 
-# Pick winner (random non-judge)
-echo "→ Picking round winner..."
-ALL_PLAYERS=(user-1 user-2 user-3 user-4)
-for p in "${ALL_PLAYERS[@]}"; do
+echo "→ Picking winner for ROUND 1..."
+for p in user-1 user-2 user-3 user-4; do
   if [[ "$p" != "$JUDGE" ]]; then
     WINNER_ID=$p
     break
@@ -82,3 +62,47 @@ done
 curl -s -X POST http://localhost:3000/pick-winner \
   -H "Content-Type: application/json" \
   -d "{\"sessionId\":\"$SESSION_ID\", \"judgeId\":\"$JUDGE\", \"winnerId\":\"$WINNER_ID\"}" | jq .
+
+# === ROUND 2 via /next-round ===
+echo "→ Starting ROUND 2 via /next-round..."
+ROUND_2_INFO=$(curl -s -X POST http://localhost:3000/next-round \
+  -H "Content-Type: application/json" \
+  -d "{\"sessionId\":\"$SESSION_ID\"}")
+echo "$ROUND_2_INFO" | jq .
+
+NEXT_PICK=$(echo "$ROUND_2_INFO" | jq -r '.blackCard.pick')
+NEXT_JUDGE=$(curl -s -X GET http://localhost:3000/session/"$SESSION_ID" | jq -r '.currentJudgeId')
+
+echo "→ Submitting cards for ROUND 2..."
+for i in 1 2 3 4; do
+  PLAYER_ID="user-$i"
+  if [[ "$PLAYER_ID" == "$NEXT_JUDGE" ]]; then
+    echo "  ❌ Skipping judge ($PLAYER_ID)"
+    continue
+  fi
+
+  HAND=$(aws dynamodb get-item \
+    --table-name GameSessions \
+    --key "{\"PK\": {\"S\": \"SESSION#$SESSION_ID\"}, \"SK\": {\"S\": \"PLAYER#$PLAYER_ID\"}}" \
+    --endpoint-url http://localhost:8000 \
+    --region eu-central-1 | jq -r '.Item.hand.L | map(.S) | .[0:'"$NEXT_PICK"']')
+
+  echo "  → $PLAYER_ID submitting cards: $HAND"
+  curl -s -X POST http://localhost:3000/submit-card \
+    -H "Content-Type: application/json" \
+    -d "{\"sessionId\":\"$SESSION_ID\", \"playerId\":\"$PLAYER_ID\", \"cardIds\": $HAND}" > /dev/null
+done
+
+echo "→ Picking winner for ROUND 2..."
+for p in user-1 user-2 user-3 user-4; do
+  if [[ "$p" != "$NEXT_JUDGE" ]]; then
+    NEXT_WINNER=$p
+    break
+  fi
+done
+
+curl -s -X POST http://localhost:3000/pick-winner \
+  -H "Content-Type: application/json" \
+  -d "{\"sessionId\":\"$SESSION_ID\", \"judgeId\":\"$NEXT_JUDGE\", \"winnerId\":\"$NEXT_WINNER\"}" | jq .
+
+echo "✅ Script complete: 2 rounds played using /next-round."
