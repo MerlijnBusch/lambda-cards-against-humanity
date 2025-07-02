@@ -29,3 +29,14 @@ aws dynamodb create-table \
   --billing-mode PAY_PER_REQUEST \
   --endpoint-url $ENDPOINT \
   --region $REGION
+
+echo "Creating Connections table..."
+aws dynamodb create-table \
+  --table-name Connections \
+  --attribute-definitions \
+    AttributeName=connectionId,AttributeType=S \
+  --key-schema \
+    AttributeName=connectionId,KeyType=HASH \
+  --billing-mode PAY_PER_REQUEST \
+  --endpoint-url $ENDPOINT \
+  --region $REGION

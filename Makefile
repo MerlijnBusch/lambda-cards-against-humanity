@@ -65,6 +65,14 @@ install-lambdas:
 	done
 	@echo "✔ All done."
 
+up-localstack:
+	cd localstack && docker-compose up -d
+
+plan-localstack:
+	cd localstack/terraform && terraform init && terraform plan
+
+deploy-localstack:
+	cd localstack/terraform && terraform apply -auto-approve
 
 
 

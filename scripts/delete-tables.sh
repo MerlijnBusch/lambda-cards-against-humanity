@@ -15,3 +15,10 @@ aws dynamodb delete-table \
   --table-name CardDecks \
   --endpoint-url $ENDPOINT \
   --region $REGION
+
+echo "Deleting Connections table..."
+aws dynamodb delete-table \
+  --table-name Connections \
+  --endpoint-url $ENDPOINT \
+  --region $REGION
+

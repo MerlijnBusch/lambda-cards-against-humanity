@@ -110,7 +110,7 @@ Resources:
           Properties:
             Path: /pick-winner
             Method: POST
-            
+
   NextRoundFunction:
     Type: AWS::Serverless::Function
     Properties:

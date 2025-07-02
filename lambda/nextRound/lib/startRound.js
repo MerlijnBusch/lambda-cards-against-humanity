@@ -7,9 +7,9 @@ const {
 } = require("@aws-sdk/client-dynamodb");
 
 const dynamo = new DynamoDBClient({
-    region: "eu-central-1",
-    endpoint: "http://dynamodb-local:8000",
-  });
+  region: "eu-central-1",
+  endpoint: "http://dynamodb-local:8000", // ✅ Local DynamoDB
+});
 
   function getRandomItem(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
